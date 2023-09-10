@@ -1,4 +1,0 @@
-INDEX VERSION 1.134+A:\NULP\КЗП\Лабораторні\роботи\lab 0\.metadata\.plugins\org.eclipse.jdt.core
-1240812733.index
-3413725848.index
-1865797976.index

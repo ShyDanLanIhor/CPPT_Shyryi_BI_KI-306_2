@@ -1,0 +1,8 @@
+package CI_306.Shyryi.Lab3;
+
+public interface BoatMovingFunctions {
+	Boolean MoveForward();
+	Boolean MoveBackward();
+	Boolean MoveLeft();
+	Boolean MoveRight();
+}

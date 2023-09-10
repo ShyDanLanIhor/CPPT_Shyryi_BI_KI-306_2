@@ -1,0 +1,38 @@
+package CI_306.Shyryi.Lab3;
+
+/**
+ * The `BoatMovingFunctions` interface defines methods for boat movement in different directions.
+ */
+public interface BoatMovingFunctions {
+	/**
+     * Move the boat forward.
+     *
+     * @param sailer The sailor responsible for the movement.
+     * @return `true` if the movement is successful; `false` otherwise.
+     */
+    Boolean MoveForward(Sailer sailer);
+
+    /**
+     * Move the boat backward.
+     *
+     * @param sailer The sailor responsible for the movement.
+     * @return `true` if the movement is successful; `false` otherwise.
+     */
+    Boolean MoveBackward(Sailer sailer);
+
+    /**
+     * Move the boat to the left.
+     *
+     * @param sailer The sailor responsible for the movement.
+     * @return `true` if the movement is successful; `false` otherwise.
+     */
+    Boolean MoveLeft(Sailer sailer);
+
+    /**
+     * Move the boat to the right.
+     *
+     * @param sailer The sailor responsible for the movement.
+     * @return `true` if the movement is successful; `false` otherwise.
+     */
+    Boolean MoveRight(Sailer sailer);
+}

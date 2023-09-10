@@ -1,0 +1,732 @@
+/**
+ * 
+ */
+package CI_306.Shyryi.Lab3;
+
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.util.ArrayList;
+import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+/**
+ * 
+ */
+public class BoatOnOars{
+	
+	private String name;
+	private Boat boat;
+	private PairOfOars[] pairOfOars;
+	private Sailer[] sailer;
+	private List<Person> passengers = new ArrayList<>();
+	public enum MoveDirection {
+	    LEFT,
+	    RIGHT,
+	    FORWARD,
+	    BACKWARD
+	}
+
+    public BoatOnOars() {
+    	System.out.print("\nПуста шлюпка на веслах була створенна");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Був створений " + this.name);
+    }
+
+    public BoatOnOars(String name, Boat boat, PairOfOars[] pairOfOars, Sailer[] sailer, List<Person> passengers) {
+        this.name = name;
+        this.boat = boat;
+        this.pairOfOars = pairOfOars;
+        this.sailer = sailer;
+        this.passengers = passengers;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.name);
+    }
+
+    public BoatOnOars(BoatOnOars other) {
+        this.name = other.name;
+        this.boat = new Boat(other.boat);
+        this.pairOfOars = other.pairOfOars.clone();
+        this.sailer = other.sailer.clone();
+        this.passengers = new ArrayList<>(other.passengers);
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.name);
+    }
+
+    {
+        this.name = "Невідомо";
+        this.boat = null;
+        this.pairOfOars = null;
+        this.sailer = null;
+    }
+    
+    public void Rowing()
+    {
+    	JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(300, 650);
+		frame.setFocusable(true);
+
+		JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+        
+		JLabel page = new JLabel();
+		panel.add(page);
+		page.setText("<html>" + getBoatInString() + "<br/>" +
+				getSailorsInString() + "<br/>" +
+				getPassengersInString() + "<br/>" +
+				"Руху ще не були спричинено" + "</html>");
+
+		frame.addKeyListener((KeyListener) new KeyListener() {
+
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+			
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				switch (keyCode) {
+				case KeyEvent.VK_UP:
+					page.setText("<html>" + getBoatInString() + "<br/>" +
+							getSailorsInString() + "<br/>" +
+							getPassengersInString() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.FORWARD) ? "Шлюпка провеслувала вперед" 
+							: "У шлюпки проблеми") + "</html>");
+					break;
+				case KeyEvent.VK_DOWN:
+					page.setText("<html>" + getBoatInString() + "<br/>" +
+							getSailorsInString() + "<br/>" +
+							getPassengersInString() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.BACKWARD) ? "Шлюпка провеслувала назад" 
+							: "У шлюпки проблеми") + "</html>");
+					break;
+				case KeyEvent.VK_RIGHT:
+					page.setText("<html>" + getBoatInString() + "<br/>" +
+							getSailorsInString() + "<br/>" +
+							getPassengersInString() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.RIGHT) ? "Шлюпка провеслувала вправо" 
+							: "У шлюпки проблеми") + "</html>");
+					break;
+				case KeyEvent.VK_LEFT:
+					page.setText("<html>" + getBoatInString() + "<br/>" +
+							getSailorsInString() + "<br/>" +
+							getPassengersInString() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.LEFT) ? "Шлюпка провеслувала вліво" 
+							: "У шлюпки проблеми") + "</html>");
+					break;
+				case KeyEvent.VK_R:
+			    	for (int i = 0; i < getBoat().getDeck().getSailorsCapacity(); i++)
+			    	{
+			    		sailer[i].Rest();
+			    		pairOfOars[i].getLeftOar().Repair();
+			    		pairOfOars[i].getRightOar().Repair();
+			    	}
+					page.setText("<html>" + getBoatInString() + "<br/>" +
+							getSailorsInString() + "<br/>" +
+							getPassengersInString() + "<br/>Ремонт та відпочинок здійснено</html>");
+					break;
+				}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+		frame.add(panel);
+    }
+    
+    public Boolean isRowingAbleTo(MoveDirection moveDirection)
+    {
+    	for (int i = 0; i < getBoat().getDeck().getSailorsCapacity(); i++)
+    	{
+            switch (moveDirection) 
+            {
+            case FORWARD:
+            	if(!pairOfOars[i].MoveForward(sailer[i])){ return false; }
+                break;
+            case BACKWARD:
+            	if(!pairOfOars[i].MoveBackward(sailer[i])){ return false; }
+                break;
+            case RIGHT:
+            	if(!pairOfOars[i].MoveRight(sailer[i])){ return false; }
+                break;
+            case LEFT:
+        		if(!pairOfOars[i].MoveLeft(sailer[i])){ return false; }
+                break;
+            }
+    	}
+    	return true;
+    }
+    
+    public String getBoatInString()
+    {
+    	return "<p> Ви пливете на " + this.name + " </p> " 
+    			+ "<p> Характеристики: </p> " 
+    			+ this.getBoat().getBody().toString() 
+    			+ this.getBoat().getDeck().toString();
+    }
+    
+    public String getSailorsInString()
+    {
+    	String htmlRaw = "";
+    	for (int i = 0; i < getBoat().getDeck().getSailorsCapacity(); i++)
+    	{
+    		htmlRaw += "<p> Весляр " + i + ": </p>" 
+    				+ this.sailer[i].toString() + this.pairOfOars[i].toString();
+    	}
+    	return htmlRaw;
+    }
+    
+    public String getPassengersInString()
+    {
+    	String htmlRaw = "";
+    	for (int i = 0; i < getBoat().getDeck().getSailorsCapacity(); i++)
+    	{
+    		htmlRaw += "<p> Пасажир " + i + ": </p>" + this.passengers.get(i).toString();
+    	}
+    	return htmlRaw;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boat getBoat() {
+        return boat;
+    }
+
+    public void setBoat(Boat boat) {
+        this.boat = boat;
+    }
+
+    public PairOfOars[] getPairOfOars() {
+        return pairOfOars;
+    }
+
+    public void setPairOfOars(PairOfOars[] pairOfOars) {
+        this.pairOfOars = pairOfOars;
+    }
+
+    public Sailer[] getSailer() {
+        return sailer;
+    }
+
+    public void setSailer(Sailer[] sailer) {
+        this.sailer = sailer;
+    }
+
+    public List<Person> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(List<Person> passengers) {
+        this.passengers = passengers;
+    }
+}
+
+class Boat 
+{
+	private Deck deck;
+	private Body body;
+
+    public Boat() {
+    	System.out.print("\nПуста шлюпка була створенна");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Шлюпка була створенна");
+    }
+
+    public Boat(Deck deck, Body body) {
+        this.deck = deck;
+        this.body = body;
+        
+        FileUtil.appendToFile("Логи.txt", "Шлюпка була створенна");
+    }
+
+    public Boat(Boat other) {
+        this.deck = new Deck(other.deck);
+        this.body = new Body(other.body);
+        
+        FileUtil.appendToFile("Логи.txt", "Шлюпка була створенна");
+    }
+
+    {
+        this.deck = new Deck();
+        this.body = new Body();
+    }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public void setBody(Body body) {
+        this.body = body;
+    }
+	
+}
+
+class Deck
+{
+	private Integer sailorsCapacity;
+	private Integer passengerCapacity;
+	
+	 public Deck() {
+		 System.out.print("\nПуста палуба була створенна");
+		 
+		 FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Deck(Integer sailorsCapacity, Integer passengerCapacity) {
+        this.sailorsCapacity = sailorsCapacity;
+        this.passengerCapacity = passengerCapacity;
+        
+        FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Deck(Deck other) {
+        this.sailorsCapacity = other.sailorsCapacity;
+        this.passengerCapacity = other.passengerCapacity;
+        
+        FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    {
+        this.sailorsCapacity = 0;
+        this.passengerCapacity = 0;
+    }
+
+    public Integer getSailorsCapacity() {
+        return sailorsCapacity;
+    }
+
+    public void setSailorsCapacity(Integer sailorsCapacity) {
+        this.sailorsCapacity = sailorsCapacity;
+    }
+
+    public Integer getPassengerCapacity() {
+        return passengerCapacity;
+    }
+
+    public void setPassengerCapacity(Integer passengerCapacity) {
+        this.passengerCapacity = passengerCapacity;
+    }
+    @Override
+    public String toString() {
+        return "<p>Палуба: </p>" +
+                "<p>кількість веслярів = " + sailorsCapacity + "</p>" +
+                "<p>кількість пасажирів=" + passengerCapacity + "</p>";
+    }
+}
+
+class Body extends Object {
+    private String purpose;
+
+    public Body() {
+        super();
+        System.out.print("\nПустий корпус був створенний");
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Body(String material, Integer durability, Integer quality, Integer maxDurability, String purpose) {
+        super(material, durability, quality, maxDurability);
+        this.purpose = purpose;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Body(Body other) {
+        super(other);
+        this.purpose = other.purpose;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    {
+        this.purpose = "За замовчуванням";
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+    
+    @Override
+    public String toString() {
+        return "<p>Корпус:</p>" +
+                "<p>призначення = " + purpose + ", матеріал = " + this.getMaterial() + "</p>" +
+                "<p> справність = " + this.getDurability() + ", якість = " + this.getQuality() + "</p>";
+    }
+}
+
+
+class PairOfOars implements BoatMovingFunctions
+{
+	private Oar rightOar;
+	private Oar leftOar;
+	
+    public PairOfOars() {
+    	System.out.print("\nПуста пара весел була створенна");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Пара весел була створенна");
+    }
+
+    public PairOfOars(Oar rightOar, Oar leftOar) {
+        this.rightOar = rightOar;
+        this.leftOar = leftOar;
+        
+        FileUtil.appendToFile("Логи.txt", "Пара весел була створенна");
+    }
+
+    public PairOfOars(PairOfOars other) {
+        this.rightOar = new Oar(other.rightOar);
+        this.leftOar = new Oar(other.leftOar);
+        
+        FileUtil.appendToFile("Логи.txt", "Пара весел була створенна");
+    }
+
+    {
+        this.rightOar = new Oar();
+        this.leftOar = new Oar();
+    }
+    
+    public Boolean MoveForward(Sailer sailer)
+    {
+    	return leftOar.Rowing(sailer) & rightOar.Rowing(sailer);
+    }
+    
+    public Boolean MoveBackward(Sailer sailer)
+    {
+    	return leftOar.Rowing(sailer) & rightOar.Rowing(sailer);
+    }
+    
+    public Boolean MoveLeft(Sailer sailer)
+    {
+    	return rightOar.Rowing(sailer);
+    }
+    
+    public Boolean MoveRight(Sailer sailer)
+    {
+    	return leftOar.Rowing(sailer);
+    }
+
+    public Oar getRightOar() {
+        return rightOar;
+    }
+
+    public void setRightOar(Oar rightOar) {
+        this.rightOar = rightOar;
+    }
+
+    public Oar getLeftOar() {
+        return leftOar;
+    }
+
+    public void setLeftOar(Oar leftOar) {
+        this.leftOar = leftOar;
+    }
+    
+    @Override
+    public String toString() {
+        return "<p>Праве весло:</p>" + this.rightOar.toString()
+        		+ "<p>Ліве весло:</p>" + this.leftOar.toString() ;
+    }
+	
+}
+
+class Oar extends Object
+{
+	public String blade;
+	public Oar() {
+		System.out.print("\nПусте весло було створене");
+		
+		FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Oar(String material, Integer durability, Integer quality, Integer maxDurability, String blade) {
+    	super(material, durability, quality, maxDurability);
+    	this.blade  = blade;
+    	
+    	FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Oar(Oar other) {
+    	super(other);
+    	this.blade = other.blade;
+    	
+    	FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    {
+    	this.blade = "Тесак";
+    }
+    
+    public String getBlade() {
+        return blade;
+    }
+
+    public void seBlade(String blade) {
+        this.blade = blade;
+    }
+	
+    public Boolean Rowing(Sailer sailer)
+    {
+    	if (super.durability > 0 && sailer.getStamina() > 0)
+    	{
+    		super.durability -= ((int)(Math.random() * 11)*100)/super.quality;
+    		sailer.setStamina(sailer.getStamina() - (((int)(Math.random() * 11)*100)/sailer.getPower()));
+    		return true;
+    	}
+    	return false;
+    }
+    
+    @Override
+    public String toString() {
+        return "<p> лопать = " + blade + ", матеріал = " + this.getMaterial() + "</p>" +
+               "<p> справність = " + this.getDurability() + ", якість = " + this.getQuality() + "</p>";
+    }
+}
+
+abstract class Object {
+    private String material;
+    protected Integer durability;
+    private Integer maxDurability;
+    protected Integer quality;
+
+    public Object() {
+        System.out.print("\nПустий об'єкт був створений");
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Object(String material, Integer durability, Integer quality, Integer maxDurability) {
+        this.material = material;
+        this.durability = durability;
+        this.quality = quality;
+        this.maxDurability = maxDurability;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Object(Object other) {
+        this.material = other.material;
+        this.durability = other.durability;
+        this.quality = other.quality;
+        this.maxDurability = other.maxDurability;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    {
+        this.material = "Невідомо";
+        this.durability = 1000;
+        this.quality = 30;
+    }
+
+    public Boolean Repair() {
+        if (((this.maxDurability * this.quality) / 100) > this.durability) {
+            this.durability = (this.maxDurability * 100) / this.quality;
+            return true;
+        }
+        return false;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public Integer getDurability() {
+        return durability;
+    }
+
+    public void setDurability(Integer durability) {
+        this.durability = durability;
+    }
+
+    public Integer getQuality() {
+        return quality;
+    }
+
+    public void setQuality(Integer quality) {
+        this.quality = quality;
+    }
+
+    @Override
+    public String toString() {
+        return "Об'єкт{" +
+                "матеріал='" + material + '\'' +
+                ", справність='" + durability + '\'' +
+                ", якість=" + quality +
+                '}';
+    }
+}
+
+class Sailer extends Person
+{
+	private Integer stamina;
+	private Integer maxStamina;
+	private Integer power;
+	private Integer experience;
+	
+    public Sailer() {
+        super();
+        System.out.print("\nПустий весляр був створений");
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Sailer(String firstname, String lastname, Integer years, Integer stamina, Integer power, Integer experience, Integer maxStamina) {
+        super(firstname, lastname, years);
+        this.stamina = stamina;
+        this.power = power;
+        this.experience = experience;
+        this.maxStamina = maxStamina;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Sailer(Sailer other) {
+        super(other);
+        this.stamina = other.stamina;
+        this.power = other.power;
+        this.experience = other.experience;
+        this.maxStamina = other.maxStamina;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    {
+        this.stamina = 0;
+        this.power = 0;
+        this.experience = 0;
+        this.maxStamina = 0;
+    }
+    
+    public void Rest()
+    {
+    	this.stamina = this.maxStamina;
+    }
+
+    public Integer getStamina() {
+        return stamina;
+    }
+
+    public void setStamina(Integer stamina) {
+        this.stamina = stamina;
+    }
+
+    public Integer getPower() {
+        return power;
+    }
+
+    public void setPower(Integer power) {
+        this.power = power;
+    }
+
+    public Integer getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
+
+    @Override
+    public String toString() {
+        return "<p>" + " ім'я = " + getFirstname() + ", прізвище = " + getLastname() + ",</p>" +
+        		"<p>" + "вік = " + getYears() +", енергія = " + stamina + ",</p>" +
+        		"<p>" + "потужність = " + power + ", досвід = " + experience + "</p>";
+    }
+
+}
+
+class Person
+{
+	private String firstname;
+	private String lastname;
+	private Integer years;
+	
+    public Person() {
+    	System.out.print("\nПуста людина була створена");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Була створена " + this.toString());
+    }
+
+    public Person(String firstname, String lastname, Integer years) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.years = years;
+        
+        FileUtil.appendToFile("Логи.txt", "Була створена " + this.toString());
+    }
+
+    public Person(Person other) {
+        this.firstname = other.firstname;
+        this.lastname = other.lastname;
+        this.years = other.years;
+        
+        FileUtil.appendToFile("Логи.txt", "Була створена " + this.toString());
+    }
+
+    {
+        this.firstname = "Невідомо";
+        this.lastname = "Невідомо";
+        this.years = 0;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public Integer getYears() {
+        return years;
+    }
+
+    public void setYears(Integer years) {
+        this.years = years;
+    }
+
+    @Override
+    public String toString() {
+        return "ім'я=" + firstname +", прізвище=" + lastname + ", вік=" + years;
+    }
+}
