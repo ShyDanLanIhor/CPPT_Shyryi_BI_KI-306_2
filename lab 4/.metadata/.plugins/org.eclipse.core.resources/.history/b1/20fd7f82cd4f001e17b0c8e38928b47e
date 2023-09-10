@@ -1,0 +1,831 @@
+package CI_306.Shyryi.Lab4;
+
+import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+/**
+ * A class representing a motorboat with various attributes and functionalities.
+ */
+public class Motorboat {
+	private String name;
+	private Boat boat;
+	private Motor motor;
+	private Helmsman helmsman;
+	private List<Person> passengers = new ArrayList<>();
+	
+	/**
+     * Enum representing possible movement directions for the motorboat.
+     */
+	public enum MoveDirection {
+	    LEFT,
+	    RIGHT,
+	    FORWARD,
+	    BACKWARD
+	}
+	
+    /**
+     * Creates an empty rowing boat.
+     */
+    public Motorboat() {
+    	System.out.print("\nПустий моторний човен був створений");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Був створений " + this.name);
+    }
+    
+    /**
+     * Creates a Motorboat with specified parameters.
+     *
+     * @param name       The name of the motorboat.
+     * @param boat       The boat component of the motorboat.
+     * @param motor      The motor component of the motorboat.
+     * @param helmsman   The helmsman steering the motorboat.
+     * @param passengers The list of passengers on board.
+     */
+    public Motorboat(String name, Boat boat, Motor motor, Helmsman helmsman, List<Person> passengers) {
+        this.name = name;
+        this.boat = boat;
+        this.motor = motor;
+        this.helmsman = helmsman;
+        this.passengers.addAll(passengers);
+    }
+
+    /**
+     * Creates a copy of a Motorboat object.
+     *
+     * @param other The Motorboat object to copy.
+     */
+    public Motorboat(Motorboat other) {
+        this.name = other.name;
+        this.boat = new Boat(other.boat);
+        this.motor = new Motor(other.motor);
+        this.helmsman = new Helmsman(other.helmsman);
+        this.passengers = new ArrayList<>(other.passengers);
+    }
+
+    /**
+     * This initialization block sets initial values for the rowing boat.
+     */
+    {
+        this.name = "";
+        this.boat = new Boat();
+        this.motor = new Motor();
+        this.helmsman = new Helmsman();
+    }
+    
+    /**
+     * Initiates rowing when interacting with keys. Displays the movement state in a window.
+     */
+    public void Rowing()
+    {
+    	JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(300, 400);
+		frame.setFocusable(true);
+
+		JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+        
+		JLabel page = new JLabel();
+		panel.add(page);
+		page.setText("<html>" + getBoatInHtml() + "<br/>" +
+				getHelmsmanInHtml() + "<br/>" +
+				getPassengersInHtml() + "<br/>" +
+				"Руху ще не було спричинено" + "</html>");
+
+		frame.addKeyListener((KeyListener) new KeyListener() {
+
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+			
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				switch (keyCode) {
+				case KeyEvent.VK_UP:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getHelmsmanInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.FORWARD) ? 
+							"Шлюпка проплила вперед" : "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала вперед");
+					break;
+				case KeyEvent.VK_DOWN:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getHelmsmanInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.BACKWARD) ? 
+							"Шлюпка проплила назад": "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала назад");
+					break;
+				case KeyEvent.VK_RIGHT:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getHelmsmanInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.RIGHT) ? 
+							"Шлюпка проплила вправо" : "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала вправо");
+					break;
+				case KeyEvent.VK_LEFT:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getHelmsmanInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.LEFT) ? 
+							"Шлюпка проплила вліво" : "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала вліво");
+					break;
+				case KeyEvent.VK_R:
+					motor.Repair();
+					boat.getBody().Repair();
+					helmsman.Rest();
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getHelmsmanInHtml() + "<br/>" + getPassengersInHtml() 
+							+ "<br/>Ремонт та відпочинок здійснено</html>");
+					FileUtil.appendToFile("Логи.txt", "Ремонт та відпочинок здійснено");
+					break;
+				}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+		frame.add(panel);
+    }
+    
+    /**
+     * Checks if the rowing boat is able to move in the specified direction.
+     *
+     * @param moveDirection The direction in which the boat should move (FORWARD, BACKWARD, RIGHT, or LEFT).
+     * @return True if the boat is able to move in the specified direction; otherwise, false.
+     */
+    public Boolean isRowingAbleTo(MoveDirection moveDirection)
+    {
+        switch (moveDirection) 
+        {
+        case FORWARD:
+        	if(!motor.MoveForward(helmsman, boat)){ return false; }
+            break;
+        case BACKWARD:
+        	if(!motor.MoveBackward(helmsman, boat)){ return false; }
+            break;
+        case RIGHT:
+        	if(!motor.MoveRight(helmsman, boat)){ return false; }
+            break;
+        case LEFT:
+    		if(!motor.MoveLeft(helmsman, boat)){ return false; }
+            break;
+        }
+    	return true;
+    }
+    
+    /**
+     * Generates an HTML representation of the boat and its characteristics.
+     *
+     * @return An HTML string containing information about the boat's name and characteristics.
+     */
+    public String getBoatInHtml()
+    {
+    	return "<p> Ви пливете на " + this.name + " </p> " 
+    			+ "<p> Характеристики: </p> " 
+    			+ this.getBoat().getBody().toHtml() 
+    			+ this.getBoat().getDeck().toHtml();
+    }
+    
+    /**
+     * Generates an HTML representation of the sailors and their associated oars.
+     *
+     * @return An HTML string containing information about sailors and their oars.
+     */
+    public String getHelmsmanInHtml()
+    {
+    	return "<p> Керманич: </p>" 
+				+ helmsman.toHtml()
+				+ "<p> Мотор: </p>" 
+				+ motor.toHtml();
+    }
+    
+    /**
+     * Generates an HTML representation of the passengers.
+     *
+     * @return An HTML string containing information about passengers
+     */
+    public String getPassengersInHtml()
+    {
+    	String htmlRaw = "";
+    	for (int i = 0; i < getBoat().getDeck().getPassengerCapacity(); i++)
+    	{
+    		htmlRaw += "<p> Пасажир " + i + ": </p>" + this.passengers.get(i).toHtml();
+    	}
+    	return htmlRaw;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boat getBoat() {
+        return boat;
+    }
+
+    public void setBoat(Boat boat) {
+        this.boat = boat;
+    }
+
+    public Motor getMotor() {
+        return motor;
+    }
+
+    public void setMotor(Motor motor) {
+        this.motor = motor;
+    }
+
+    public Helmsman getHelmsman() {
+        return helmsman;
+    }
+
+    public void setHelmsman(Helmsman helmsman) {
+        this.helmsman = helmsman;
+    }
+
+    public List<Person> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(List<Person> passengers) {
+        this.passengers = passengers;
+    }
+}
+
+/**
+ * This class represents a boat with a deck and body.
+ * The boat can have various configurations for its deck and body.
+ */
+class Boat 
+{
+	private Deck deck;
+	private Body body;
+
+    public Boat() {
+    	System.out.print("\nПуста шлюпка була створенна");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Шлюпка була створенна");
+    }
+
+    public Boat(Deck deck, Body body) {
+        this.deck = deck;
+        this.body = body;
+        
+        FileUtil.appendToFile("Логи.txt", "Шлюпка була створенна");
+    }
+
+    public Boat(Boat other) {
+        this.deck = new Deck(other.deck);
+        this.body = new Body(other.body);
+        
+        FileUtil.appendToFile("Логи.txt", "Шлюпка була створенна");
+    }
+
+    {
+        this.deck = new Deck();
+        this.body = new Body();
+    }
+
+    public Deck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(Deck deck) {
+        this.deck = deck;
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public void setBody(Body body) {
+        this.body = body;
+    }
+
+}
+
+/**
+ * This class represents a boat's deck configuration, including the capacity for sailors and passengers.
+ * The deck can have specific capacities for sailors and passengers.
+ */
+class Deck
+{
+	private Integer passengerCapacity;
+	
+	 public Deck() {
+		 System.out.print("\nПуста палуба була створенна");
+		 
+		 FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Deck(Integer passengerCapacity) {
+        this.passengerCapacity = passengerCapacity;
+        
+        FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Deck(Deck other) {
+        this.passengerCapacity = other.passengerCapacity;
+        
+        FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    {
+        this.passengerCapacity = 0;
+    }
+
+    public Integer getPassengerCapacity() {
+        return passengerCapacity;
+    }
+
+    public void setPassengerCapacity(Integer passengerCapacity) {
+        this.passengerCapacity = passengerCapacity;
+    }
+    
+    public String toHtml() {
+        return "<p>Палуба: </p>" +
+                "<p>кількість пасажирів=" + passengerCapacity + "</p>";
+    }
+    
+    @Override
+    public String toString() {
+        return "Палуба{" +
+                "кількість пасажирів='" + passengerCapacity + '\'' +
+                '}';
+    }
+}
+
+/**
+ * This class represents the body of a boat, including its material, durability, quality, and purpose.
+ * The body can be configured with specific material, durability, quality, and purpose.
+ */
+class Body extends Object {
+    private String purpose;
+
+    public Body() {
+        super();
+        System.out.print("\nПустий корпус був створенний");
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Body(String material, Integer durability, Integer quality, Integer maxDurability, String purpose) {
+        super(material, durability, quality, maxDurability);
+        this.purpose = purpose;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Body(Body other) {
+        super(other);
+        this.purpose = other.purpose;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    {
+        this.purpose = "За замовчуванням";
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+    
+    public String toHtml() {
+        return "<p>Корпус:</p>" +
+                "<p>призначення = " + purpose + ", матеріал = " + this.getMaterial() + "</p>" +
+                "<p> справність = " + this.getDurability() + ", якість = " + this.getQuality() + "</p>";
+    }
+    
+    @Override
+    public String toString() {
+        return "Корпус{" +
+                "призначення='" + purpose + '\'' +
+                ", матеріал='" + super.getMaterial() + '\'' +
+                ", справність=" + super.getDurability() +
+                ", maxCправність=" + super.getMaxDurability() +
+                ", якість=" + super.getQuality() +
+                '}';
+    }
+}
+
+/**
+ * A class representing a motor for a boat, implementing BoatMovingFunctions.
+ */
+class Motor extends Object implements BoatMovingFunctions
+{
+	public String manufacturer;
+	public Motor() {
+		System.out.print("\nПусте весло було створене");
+		
+		FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Motor(String material, Integer durability, Integer quality, Integer maxDurability, String manufacturer) {
+    	super(material, durability, quality, maxDurability);
+    	this.manufacturer  = manufacturer;
+    	
+    	FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    public Motor(Motor other) {
+    	super(other);
+    	this.manufacturer = other.manufacturer;
+    	
+    	FileUtil.appendToFile("Логи.txt", "Було створене " + this.toString());
+    }
+
+    {
+    	this.manufacturer = "Greenworks";
+    }
+    
+    public String getManufacturer() {
+        return manufacturer;
+    }
+    
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+    
+    /**
+     * Moves the boat forward by rowing with the motor.
+     *
+     * @param helmsman The helmsman controlling the motorboat.
+     * @param boat     The boat to be moved.
+     * @return True if the boat moves forward successfully; otherwise, false.
+     */
+    public Boolean MoveForward(Helmsman helmsman, Boat boat) {
+        return Rowing(helmsman, boat);
+    }
+    
+    /**
+     * Moves the boat backward by rowing with the motor.
+     *
+     * @param helmsman The helmsman controlling the motorboat.
+     * @param boat     The boat to be moved.
+     * @return True if the boat moves backward successfully; otherwise, false.
+     */
+    public Boolean MoveBackward(Helmsman helmsman, Boat boat) {
+        return Rowing(helmsman, boat);
+    }
+    
+    /**
+     * Moves the boat to the left by rowing with the motor.
+     *
+     * @param helmsman The helmsman controlling the motorboat.
+     * @param boat     The boat to be moved.
+     * @return True if the boat moves left successfully; otherwise, false.
+     */
+    public Boolean MoveLeft(Helmsman helmsman, Boat boat) {
+        return Rowing(helmsman, boat);
+    }
+    
+    /**
+     * Moves the boat to the right by rowing with the motor.
+     *
+     * @param helmsman The helmsman controlling the motorboat.
+     * @param boat     The boat to be moved.
+     * @return True if the boat moves right successfully; otherwise, false.
+     */
+    public Boolean MoveRight(Helmsman helmsman, Boat boat) {
+        return Rowing(helmsman, boat);
+    }
+    
+    /**
+     * Simulates rowing action, reducing the durability of the oar, stamina of the helmsman, and boat's body durability.
+     *
+     * @param helmsman The helmsman performing the rowing.
+     * @param boat   The boat in which rowing is taking place.
+     * @return True if rowing is successful and all conditions are met; otherwise, false.
+     */
+    public Boolean Rowing(Helmsman helmsman, Boat boat) {
+        if (super.durability > 0 && helmsman.getStamina() > 0 && boat.getBody().getDurability() > 0) {
+            // Reduce oar's durability
+            super.durability -= ((int) (Math.random() * 11) * 100) / super.quality;
+
+            // Reduce sailer's stamina
+            helmsman.setStamina(helmsman.getStamina() - (((int) (Math.random() * 11) * 100) / helmsman.getPower()));
+
+            // Reduce boat's body durability
+            boat.getBody().setDurability(boat.getBody().getDurability() -
+                    ((int) (Math.random() * 11) * 100) / boat.getBody().getQuality());
+
+            return true;
+        }
+        return false;
+    }
+
+    
+    public String toHtml() {
+        return "<p> лопать = " + manufacturer + ", матеріал = " + this.getMaterial() + "</p>" +
+               "<p> справність = " + this.getDurability() + ", якість = " + this.getQuality() + "</p>";
+    }
+    
+    @Override
+    public String toString() {
+        return "Мотор{" +
+                "виробник='" + manufacturer + '\'' +
+                ", матеріал='" + super.getMaterial() + '\'' +
+                ", справність=" + super.getDurability() +
+                ", maxCправність=" + super.getMaxDurability() +
+                ", якість=" + super.getQuality() +
+                '}';
+    }
+}
+
+abstract class Object {
+    private String material;
+    protected Integer durability;
+    private Integer maxDurability;
+    protected Integer quality;
+
+    public Object() {
+        System.out.print("\nПустий об'єкт був створений");
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Object(String material, Integer durability, Integer quality, Integer maxDurability) {
+        this.material = material;
+        this.durability = durability;
+        this.quality = quality;
+        this.maxDurability = maxDurability;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Object(Object other) {
+        this.material = other.material;
+        this.durability = other.durability;
+        this.quality = other.quality;
+        this.maxDurability = other.maxDurability;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    {
+        this.material = "Невідомо";
+        this.durability = 1000;
+        this.quality = 30;
+    }
+    
+    /**
+     * Repairs the object's durability if it is below the desired level.
+     *
+     * @return True if the object was repaired; otherwise, false
+     */
+    public Boolean Repair() {
+        if (((this.maxDurability * this.quality) / 100) > this.durability) {
+            this.durability = (this.maxDurability * 100) / this.quality;
+            return true;
+        }
+        return false;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public Integer getDurability() {
+        return durability;
+    }
+
+    public void setDurability(Integer durability) {
+        this.durability = durability;
+    }
+    
+    public Integer getMaxDurability() {
+        return maxDurability;
+    }
+
+    public void setMaxDurability(Integer maxDurability) {
+        this.maxDurability = maxDurability;
+    }
+
+    public Integer getQuality() {
+        return quality;
+    }
+
+    public void setQuality(Integer quality) {
+        this.quality = quality;
+    }
+
+
+    public String toHtml() {
+        return "Об'єкт{" +
+                "матеріал='" + material + '\'' +
+                ", справність='" + durability + '\'' +
+                ", якість=" + quality +
+                '}';
+    }
+    
+    @Override
+    public String toString() {
+        return "Об'єкт{" +
+                "матеріал='" + material + '\'' +
+                ", справність=" + durability +
+                ", maxCправність=" + maxDurability +
+                ", якість=" + quality +
+                '}';
+    }
+}
+/**
+ * A class representing a helmsman who operates the boat, extending the Person class.
+ */
+class Helmsman extends Person
+{
+	private Integer stamina;
+	private Integer maxStamina;
+	private Integer power;
+	private Integer experience;
+	
+    public Helmsman() {
+        super();
+        System.out.print("\nПустий весляр був створений");
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Helmsman(String firstname, String lastname, Integer years, Integer stamina, 
+    		Integer power, Integer experience, Integer maxStamina) {
+        super(firstname, lastname, years);
+        this.stamina = stamina;
+        this.power = power;
+        this.experience = experience;
+        this.maxStamina = maxStamina;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    public Helmsman(Helmsman other) {
+        super(other);
+        this.stamina = other.stamina;
+        this.power = other.power;
+        this.experience = other.experience;
+        this.maxStamina = other.maxStamina;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.toString());
+    }
+
+    {
+        this.stamina = 0;
+        this.power = 0;
+        this.experience = 0;
+        this.maxStamina = 0;
+    }
+
+    /**
+     * Resets the helmsman's stamina to its maximum value.
+     */
+    public void Rest()
+    {
+    	this.stamina = this.maxStamina;
+    }
+
+    public Integer getStamina() {
+        return stamina;
+    }
+
+    public void setStamina(Integer stamina) {
+        this.stamina = stamina;
+    }
+
+    public Integer getPower() {
+        return power;
+    }
+
+    public void setPower(Integer power) {
+        this.power = power;
+    }
+
+    public Integer getExperience() {
+        return experience;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
+
+    public String toHtml()
+    {
+    	return "<p>" + " ім'я = " + getFirstname() + ", прізвище = " + getLastname() + ",</p>" +
+        		"<p>" + "вік = " + getYears() +", енергія = " + stamina + ",</p>" +
+        		"<p>" + "потужність = " + power + ", досвід = " + experience + "</p>";
+    }
+    
+    @Override
+    public String toString() {
+        return "Керманич{" +
+                "ім'я='" + getFirstname() + '\'' +
+                ", прізвище='" + getLastname() + '\'' +
+                ", вік=" + getYears() +
+                ", енергія=" + stamina +
+                ", maxЕнергія=" + maxStamina +
+                ", потужність=" + power +
+                ", досвід=" + experience +
+                '}';
+    }
+}
+
+/**
+ * A class representing a person with a first name, last name, and age.
+ */
+class Person
+{
+	private String firstname;
+	private String lastname;
+	private Integer years;
+	
+    public Person() {
+    	System.out.print("\nПуста людина була створена");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Була створена " + this.toString());
+    }
+
+    public Person(String firstname, String lastname, Integer years) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.years = years;
+        
+        FileUtil.appendToFile("Логи.txt", "Була створена " + this.toString());
+    }
+
+    public Person(Person other) {
+        this.firstname = other.firstname;
+        this.lastname = other.lastname;
+        this.years = other.years;
+        
+        FileUtil.appendToFile("Логи.txt", "Була створена " + this.toString());
+    }
+
+    {
+        this.firstname = "Невідомо";
+        this.lastname = "Невідомо";
+        this.years = 0;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public Integer getYears() {
+        return years;
+    }
+
+    public void setYears(Integer years) {
+        this.years = years;
+    }
+    
+    public String toHtml()
+    {
+    	return "ім'я=" + firstname +", прізвище=" + lastname + ", вік=" + years;
+    }
+
+	@Override
+	public String toString() {
+		return "Людина{" +
+				"ім'я='" + firstname + '\'' +
+				", прізвище='" + lastname + '\'' +
+				", вік=" + years +
+				'}';
+	}
+}

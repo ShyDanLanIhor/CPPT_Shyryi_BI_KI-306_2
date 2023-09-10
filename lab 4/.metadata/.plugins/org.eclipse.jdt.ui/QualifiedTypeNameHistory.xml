@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.FileUtil"/>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.models.Person"/>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.models.Motorboat"/>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.models.Body"/>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.models.Deck"/>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.models.Motor"/>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.models.Helmsman"/>
+    <fullyQualifiedTypeName name="CI_306.Shyryi.Lab4.models.Boat"/>
+</qualifiedTypeNameHistroy>
