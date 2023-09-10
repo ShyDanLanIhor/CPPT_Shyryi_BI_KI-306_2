@@ -1,0 +1,284 @@
+package CI_306.Shyryi.Lab3.models;
+
+import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import CI_306.Shyryi.Lab3.BoatOnOars.MoveDirection;
+import CI_306.Shyryi.Lab3.FileUtil;
+
+public class BoatOnOars{
+	
+	private String name;
+	private Boat boat;
+	private PairOfOars[] pairOfOars;
+	private Sailer[] sailer;
+	private List<Person> passengers = new ArrayList<>();
+	public enum MoveDirection {
+	    LEFT,
+	    RIGHT,
+	    FORWARD,
+	    BACKWARD
+	}
+	
+    /**
+     * Creates an empty rowing boat.
+     */
+    public BoatOnOars() {
+    	System.out.print("\nПуста шлюпка на веслах була створенна");
+    	
+    	FileUtil.appendToFile("Логи.txt", "Був створений " + this.name);
+    }
+    
+    /**
+     * Creates a rowing boat with specified parameters.
+     *
+     * @param name       The name of the rowing boat
+     * @param boat       The larger boat to which the rowing boat is attached
+     * @param pairOfOars An array of oar pairs
+     * @param sailer     An array of sailors
+     * @param passengers A list of passengers
+     */
+    public BoatOnOars(String name, Boat boat, PairOfOars[] pairOfOars, Sailer[] sailer, List<Person> passengers) {
+        this.name = name;
+        this.boat = boat;
+        this.pairOfOars = pairOfOars;
+        this.sailer = sailer;
+        this.passengers = passengers;
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.name);
+    }
+
+    /**
+     * Copies another rowing boat.
+     *
+     * @param other Another rowing boat to be copied
+     */
+    public BoatOnOars(BoatOnOars other) {
+        this.name = other.name;
+        this.boat = new Boat(other.boat);
+        this.pairOfOars = other.pairOfOars.clone();
+        this.sailer = other.sailer.clone();
+        this.passengers = new ArrayList<>(other.passengers);
+        
+        FileUtil.appendToFile("Логи.txt", "Був створений " + this.name);
+    }
+
+    /**
+     * This initialization block sets initial values for the rowing boat.
+     */
+    {
+        this.name = "Невідомо";
+        this.boat = null;
+        this.pairOfOars = null;
+        this.sailer = null;
+    }
+    
+    /**
+     * Initiates rowing when interacting with keys. Displays the movement state in a window.
+     */
+    public void Rowing()
+    {
+    	JFrame frame = new JFrame();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(300, 650);
+		frame.setFocusable(true);
+
+		JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+        
+		JLabel page = new JLabel();
+		panel.add(page);
+		page.setText("<html>" + getBoatInHtml() + "<br/>" +
+				getSailorsInHtml() + "<br/>" +
+				getPassengersInHtml() + "<br/>" +
+				"Руху ще не було спричинено" + "</html>");
+
+		frame.addKeyListener((KeyListener) new KeyListener() {
+
+			public void keyTyped(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+			
+			public void keyPressed(KeyEvent e) {
+				int keyCode = e.getKeyCode();
+				switch (keyCode) {
+				case KeyEvent.VK_UP:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getSailorsInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.FORWARD) ? 
+							"Шлюпка провеслувала вперед" : "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала вперед");
+					break;
+				case KeyEvent.VK_DOWN:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getSailorsInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.BACKWARD) ? 
+							"Шлюпка провеслувала назад": "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала назад");
+					break;
+				case KeyEvent.VK_RIGHT:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getSailorsInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.RIGHT) ? 
+							"Шлюпка провеслувала вправо" : "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала вправо");
+					break;
+				case KeyEvent.VK_LEFT:
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getSailorsInHtml() + "<br/>" +
+							getPassengersInHtml() + "<br/>" +
+							(isRowingAbleTo(MoveDirection.LEFT) ? 
+							"Шлюпка провеслувала вліво" : "У шлюпки проблеми") + "</html>");
+					FileUtil.appendToFile("Логи.txt", "Шлюпка " + name + " провеслувала вліво");
+					break;
+				case KeyEvent.VK_R:
+			    	for (int i = 0; i < getBoat().getDeck().getSailorsCapacity(); i++)
+			    	{
+			    		sailer[i].Rest();
+			    		pairOfOars[i].getLeftOar().Repair();
+			    		pairOfOars[i].getRightOar().Repair();
+			    	}
+			    	boat.getBody().Repair();
+					page.setText("<html>" + getBoatInHtml() + "<br/>" +
+							getSailorsInHtml() + "<br/>" + getPassengersInHtml() 
+							+ "<br/>Ремонт та відпочинок здійснено</html>");
+					FileUtil.appendToFile("Логи.txt", "Ремонт та відпочинок здійснено");
+					break;
+				}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+		});
+
+		frame.add(panel);
+    }
+    
+    /**
+     * Checks if the rowing boat is able to move in the specified direction.
+     *
+     * @param moveDirection The direction in which the boat should move (FORWARD, BACKWARD, RIGHT, or LEFT)
+     * @return True if the boat is able to move in the specified direction; otherwise, false
+     */
+    public Boolean isRowingAbleTo(MoveDirection moveDirection)
+    {
+    	for (int i = 0; i < getBoat().getDeck().getSailorsCapacity(); i++)
+    	{
+            switch (moveDirection) 
+            {
+            case FORWARD:
+            	if(!pairOfOars[i].MoveForward(sailer[i], boat)){ return false; }
+                break;
+            case BACKWARD:
+            	if(!pairOfOars[i].MoveBackward(sailer[i], boat)){ return false; }
+                break;
+            case RIGHT:
+            	if(!pairOfOars[i].MoveRight(sailer[i], boat)){ return false; }
+                break;
+            case LEFT:
+        		if(!pairOfOars[i].MoveLeft(sailer[i], boat)){ return false; }
+                break;
+            }
+    	}
+    	return true;
+    }
+    
+    /**
+     * Generates an HTML representation of the boat and its characteristics.
+     *
+     * @return An HTML string containing information about the boat's name and characteristics
+     */
+    public String getBoatInHtml()
+    {
+    	return "<p> Ви пливете на " + this.name + " </p> " 
+    			+ "<p> Характеристики: </p> " 
+    			+ this.getBoat().getBody().toHtml() 
+    			+ this.getBoat().getDeck().toHtml();
+    }
+    
+    /**
+     * Generates an HTML representation of the sailors and their associated oars.
+     *
+     * @return An HTML string containing information about sailors and their oars
+     */
+    public String getSailorsInHtml()
+    {
+    	String htmlRaw = "";
+    	for (int i = 0; i < getBoat().getDeck().getSailorsCapacity(); i++)
+    	{
+    		htmlRaw += "<p> Весляр " + i + ": </p>" 
+    				+ this.sailer[i].toHtml() + this.pairOfOars[i].toHtml();
+    	}
+    	return htmlRaw;
+    }
+    
+    /**
+     * Generates an HTML representation of the passengers.
+     *
+     * @return An HTML string containing information about passengers
+     */
+    public String getPassengersInHtml()
+    {
+    	String htmlRaw = "";
+    	for (int i = 0; i < getBoat().getDeck().getPassengerCapacity(); i++)
+    	{
+    		htmlRaw += "<p> Пасажир " + i + ": </p>" + this.passengers.get(i).toHtml();
+    	}
+    	return htmlRaw;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Boat getBoat() {
+        return boat;
+    }
+
+    public void setBoat(Boat boat) {
+        this.boat = boat;
+    }
+
+    public PairOfOars[] getPairOfOars() {
+        return pairOfOars;
+    }
+
+    public void setPairOfOars(PairOfOars[] pairOfOars) {
+        this.pairOfOars = pairOfOars;
+    }
+
+    public Sailer[] getSailer() {
+        return sailer;
+    }
+
+    public void setSailer(Sailer[] sailer) {
+        this.sailer = sailer;
+    }
+
+    public List<Person> getPassengers() {
+        return passengers;
+    }
+
+    public void setPassengers(List<Person> passengers) {
+        this.passengers = passengers;
+    }
+}

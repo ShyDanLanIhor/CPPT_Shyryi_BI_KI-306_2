@@ -1,1 +1,0 @@
-# CPPT_Shyryi_BI_KI-306_2

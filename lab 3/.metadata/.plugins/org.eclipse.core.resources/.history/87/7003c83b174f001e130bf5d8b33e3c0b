@@ -1,0 +1,60 @@
+package CI_306.Shyryi.Lab3;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.util.Scanner;
+
+public class BoatOnOarsDriver 
+{
+	 public static void main(String[] args) 
+	 {
+		 Scanner scanner = new Scanner(System.in);
+	        Robot robot;
+	        
+	        try {
+	            robot = new Robot();
+	        } catch (AWTException e) {
+	            e.printStackTrace();
+	            return;
+	        }
+
+	        System.out.println("Натисніть клавішу (Q для виходу):");
+
+	        while (true) {
+	            if (scanner.hasNext()) {
+	                char key = scanner.next().charAt(0);
+
+	                switch (key) {
+	                    case 'Q':
+	                    case 'q':
+	                        System.out.println("Програма завершена.");
+	                        return;
+	                    case 'U':
+	                    case 'u':
+	                        robot.keyPress(KeyEvent.VK_UP);
+	                        robot.keyRelease(KeyEvent.VK_UP);
+	                        break;
+	                    case 'D':
+	                    case 'd':
+	                        robot.keyPress(KeyEvent.VK_DOWN);
+	                        robot.keyRelease(KeyEvent.VK_DOWN);
+	                        break;
+	                    case 'L':
+	                    case 'l':
+	                        robot.keyPress(KeyEvent.VK_LEFT);
+	                        robot.keyRelease(KeyEvent.VK_LEFT);
+	                        break;
+	                    case 'R':
+	                    case 'r':
+	                        robot.keyPress(KeyEvent.VK_RIGHT);
+	                        robot.keyRelease(KeyEvent.VK_RIGHT);
+	                        break;
+	                    default:
+	                        System.out.println("Невідома команда: " + key);
+	                        break;
+	                }
+	            }
+	        }
+	 }
+}

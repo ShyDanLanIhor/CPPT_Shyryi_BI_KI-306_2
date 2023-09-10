@@ -1,0 +1,45 @@
+package CI_306.Shyryi.Lab3;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.io.Console;
+import java.io.IOException;
+
+public class BoatOnOarsDriver 
+{
+	 public static void main(String[] args) 
+	 {
+		 try {
+	            Robot robot = new Robot();
+
+	            System.out.println("Натисніть клавішу (Q для виходу):");
+
+	            while (true) {
+	                int key = System.in.read();
+
+	                if (key == -1) {
+	                    continue;
+	                }
+
+	                char keyChar = (char) key;
+
+	                if (keyChar == 'Q' || keyChar == 'q') {
+	                    System.out.println("Програма завершена.");
+	                    break;
+	                } else {
+	                    // Симулювати клавішу для символу
+	                    int keyCode = KeyEvent.getExtendedKeyCodeForChar((int) keyChar);
+	                    if (keyCode != KeyEvent.VK_UNDEFINED) {
+	                        robot.keyPress(keyCode);
+	                        robot.keyRelease(keyCode);
+	                    }
+
+	                    System.out.println("Ви натиснули: " + keyChar);
+	                }
+	            }
+	        } catch (AWTException | IOException e) {
+	            e.printStackTrace();
+	        }
+	 }
+}
