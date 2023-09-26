@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"CI_306.Shyryi.Lab5"}];updateSearchResults();
