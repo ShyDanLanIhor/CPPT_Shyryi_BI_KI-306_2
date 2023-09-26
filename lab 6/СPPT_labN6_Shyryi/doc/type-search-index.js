@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"CE_306.Shyryi.Lab6","l":"Jar"},{"p":"CE_306.Shyryi.Lab6","l":"JarDriver"}];updateSearchResults();
