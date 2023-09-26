@@ -1,0 +1,66 @@
+/**
+ * 
+ */
+package CI_306.Shyryi.Lab3;
+
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * 
+ */
+public class BoatOnOars {
+	
+	private String name;
+	private Boat boat;
+	private PairOfOars[] pairOfOars;
+	private Sailer[] sailer;
+	private List<Person> passagers = new ArrayList<>();
+	
+	
+	class Boat 
+	{
+		private Deck deck;
+		private Body body;
+		
+	}
+	
+	class Deck
+	{
+		private Integer sailorsCapacity;
+		private Integer passengerCapacity;
+	}
+	
+	class Body
+	{
+		private String material;
+		private Integer durability;
+		
+	}
+	
+	class PairOfOars
+	{
+		private Oar rightOar;
+		private Oar leftOar;
+		
+	}
+	
+	class Oar 
+	{
+		private String material;
+		private Integer durability;
+	}
+	
+	class Sailer extends Person
+	{
+		private Integer Stamina;
+		private Integer Power;
+		
+	}
+	
+	class Person
+	{
+		private String firstname;
+		private String lastname;
+	}
+}

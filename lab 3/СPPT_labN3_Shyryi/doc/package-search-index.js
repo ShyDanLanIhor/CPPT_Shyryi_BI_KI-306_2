@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"CI_306.Shyryi.Lab3"},{"l":"CI_306.Shyryi.Lab3.models"}];updateSearchResults();

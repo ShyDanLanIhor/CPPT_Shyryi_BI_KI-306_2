@@ -1,0 +1,122 @@
+package CI_306.Shyryi.Lab4;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+/**
+ * The ExpressionCalculatorGUI class provides a graphical user interface for
+ * performing mathematical calculations based on user input. It allows the user
+ * to input a value for 'x', select whether to use the value of π (pi), and specify
+ * a file name for saving the calculation result.
+ */
+public class ExpressionCalculatorGUI {
+	private JTextField xTextField;
+    private JTextField fileNameTextField;
+    private JButton calculateButton;
+    private JButton openFileButton;
+    private JTextArea resultTextArea;
+    JCheckBox checkBox = new JCheckBox("πі"); 
+    /**
+     * Constructs the ExpressionCalculatorGUI, creating the graphical user interface
+     * and setting up event listeners for the calculate and open file buttons.
+     */
+    public ExpressionCalculatorGUI() {
+        JFrame frame = new JFrame("Calculator");
+        frame.setSize(600, 150);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        JPanel inputPanel = new JPanel(new GridLayout(2, 4, 0, 20));
+        JLabel xLabel = new JLabel("Введіть значення x:");
+        xTextField = new JTextField(); 
+        checkBox.setSize(1,1);  
+        JLabel fileNameLabel = new JLabel("Введіть назву файлу:");
+        fileNameTextField = new JTextField();
+        calculateButton = new JButton("Обчислити");
+        openFileButton = new JButton("Відкрити файл");
+        inputPanel.add(xLabel);
+        inputPanel.add(xTextField);
+        inputPanel.add(calculateButton);
+        inputPanel.add(checkBox); 
+        inputPanel.add(fileNameLabel);
+        inputPanel.add(fileNameTextField);
+        inputPanel.add(openFileButton);
+
+        resultTextArea = new JTextArea();
+        resultTextArea.setEditable(false);
+
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(new JScrollPane(resultTextArea), BorderLayout.CENTER);
+
+        calculateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calculateExpression();
+            }
+        });
+
+        openFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openFile();
+            }
+        });
+
+        frame.setVisible(true);
+    }
+    
+    /**
+     * Calculates the mathematical expression based on user input for 'x' and the
+     * selection of π (pi). Saves the result to a specified file or a default file
+     * if no file name is provided.
+     */
+    private void calculateExpression() {
+        try {
+            double x = Double.parseDouble(xTextField.getText());
+            double result = 1 / ((checkBox.isSelected() && ((Math.abs(4 * x) == 0.5) ||
+        						(((4 * x - 0.5) % 1) == 0))) ?
+        						0 : Math.cos(4 * x));
+            
+			if (result == Double.NaN 
+				|| result == Double.NEGATIVE_INFINITY 
+				|| result == Double.POSITIVE_INFINITY)
+				{ throw new CalcException(); }
+			
+			
+            String fileName = fileNameTextField.getText();
+            if (fileName.isEmpty()) {
+                fileName = "result.txt";
+            }
+            PrintWriter writer = new PrintWriter(new FileWriter(fileName + ".txt"));
+            writer.println("Значення y при x = " + x + " дорівнює " + result);
+            writer.close();
+            resultTextArea.setText("Результат обчислення записано у файл '" + fileName + "'");
+            
+        } catch (NumberFormatException e) {
+            resultTextArea.setText("Помилка: Невірний формат введених даних для x");
+        } catch (ArithmeticException e) {
+        	resultTextArea.setText("Ділення на нуль: cos(4x) дорівнює нулю.");
+        } catch (IOException e) {
+            resultTextArea.setText("Помилка запису в файл: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Opens a text file with the specified file name or displays an error message
+     * if the file cannot be opened.
+     */
+    private void openFile() {
+        String fileName = fileNameTextField.getText();
+        try {
+            java.awt.Desktop.getDesktop().open(new java.io.File(fileName + ".txt"));
+        } catch (IOException e) {
+            resultTextArea.setText("Помилка відкриття файлу: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            resultTextArea.setText("Помилка: " + e.getMessage());
+        }
+    }
+}

@@ -1,0 +1,46 @@
+package CI_306.Shyryi.Lab2;
+
+import CI_306.Shyryi.Lab3.models.Boat;
+import CI_306.Shyryi.Lab3.models.Sailer;
+
+/**
+ * An interface for boat moving functions.
+ */
+public interface BoatMovingFunctions {
+
+    /**
+     * Move forward.
+     *
+     * @param sailer The sailer object.
+     * @param boat   The boat object.
+     * @return True if successful, false otherwise.
+     */
+    Boolean MoveForward(Sailer sailer, Boat boat);
+
+    /**
+     * Move backward.
+     *
+     * @param sailer The sailer object.
+     * @param boat   The boat object.
+     * @return True if successful, false otherwise.
+     */
+    Boolean MoveBackward(Sailer sailer, Boat boat);
+
+    /**
+     * Move left.
+     *
+     * @param sailer The sailer object.
+     * @param boat   The boat object.
+     * @return True if successful, false otherwise.
+     */
+    Boolean MoveLeft(Sailer sailer, Boat boat);
+
+    /**
+     * Move right.
+     *
+     * @param sailer The sailer object.
+     * @param boat   The boat object.
+     * @return True if successful, false otherwise.
+     */
+    Boolean MoveRight(Sailer sailer, Boat boat);
+}

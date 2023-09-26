@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;СPPT_labN3_Shyryi&apos; to &apos;СPPT_labN2_Shyryi&apos;" description="Rename resource &apos;СPPT_labN3_Shyryi&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/СPPT_labN3_Shyryi" name="СPPT_labN2_Shyryi" stamp="1694376757303" updateReferences="true"/>
+</session>

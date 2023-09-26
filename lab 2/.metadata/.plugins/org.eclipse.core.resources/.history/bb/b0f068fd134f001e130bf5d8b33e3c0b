@@ -1,0 +1,29 @@
+package CI_306.Shyryi.Lab3;
+
+import java.awt.Component;
+import java.awt.event.KeyEvent;
+
+public class BoatOnOarsDriver 
+{
+	 public static void main(String[] args) 
+	 {
+		BoatOnOars boat = new BoatOnOars();
+        
+        // Створюємо об'єкт KeyEvent для клавіші "W"
+        KeyEvent keyEventW = new KeyEvent((Component) new Object(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_W, 'W');
+        
+        // Створюємо об'єкт KeyEvent для клавіші "A"
+        KeyEvent keyEventA = new KeyEvent((Component) new Object(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_A, 'A');
+        
+        // Створюємо об'єкт KeyEvent для клавіші "D"
+        KeyEvent keyEventD = new KeyEvent((Component) new Object(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_D, 'D');
+        
+        // Створюємо об'єкт KeyEvent для клавіші "S"
+        KeyEvent keyEventS = new KeyEvent((Component) new Object(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_S, 'S');
+        
+        boat.keyPressed(keyEventW);
+        boat.keyPressed(keyEventA);
+        boat.keyPressed(keyEventD);
+        boat.keyPressed(keyEventS);
+	 }
+}
