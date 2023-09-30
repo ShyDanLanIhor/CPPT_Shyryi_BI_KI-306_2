@@ -1,0 +1,21 @@
+package CE_306.Shyryi.Lab6;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
+public class MyClass<T> {
+    private List<T> items;
+
+    public MyClass() {
+        Type genericSuperclass = getClass().getGenericSuperclass();
+        if (genericSuperclass instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) genericSuperclass;
+            Type[] typeArguments = parameterizedType.getActualTypeArguments();
+            if (typeArguments.length > 0) {
+                Class<?> typeClass = (Class<?>) typeArguments[0];
+                System.out.println("Type of T is: " + typeClass.getName());
+            }
+        }
+    }
+}
